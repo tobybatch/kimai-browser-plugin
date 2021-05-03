@@ -1,0 +1,25 @@
+{
+    "name": "tobybatch/kimai-browser-plugin",
+    "description": "Browser plugin",
+    "homepage": "https://www.neontribe.co.uk/",
+    "type": "kimai-plugin",
+    "version": "0.1",
+    "require": {
+        "kimai/kimai2-composer": "*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Toby Batch",
+            "email": "tobias@neontribe.co.uk",
+            "homepage": "https://www.neontribe.co.uk"
+        }
+    ],
+    "extra": {
+        "kimai": {
+            "require": "1.3",
+            "version": "0.1",
+            "name": "YourBundle"
+        }
+    }
+}
