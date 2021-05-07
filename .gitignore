@@ -1,2 +1,9 @@
 build.pem
 /symfony/CustomCSSBundle-1.3/
+.eslintcache
+.idea/
+build.crx
+build/
+example/
+node_modules/
+yarn.lock

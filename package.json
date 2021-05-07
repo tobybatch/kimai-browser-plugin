@@ -11,6 +11,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "crx3": "^1.1.3",
     "filemanager-webpack-plugin": "3.0.0-beta.0",
     "react": "^17.0.1",
     "react-app-rewired": "2.1.6",
@@ -25,7 +26,7 @@
     "husky": "^6.0.0",
     "standard-version": "^9.2.0"
   },
-    "husky": {
+  "husky": {
     "hooks": {
       "pre-commit": "echo git hooks are awesome!",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
@@ -35,6 +36,8 @@
     "start": "react-app-rewired start",
     "build:extension": "REACT_APP_BUILD_TARGET=extension react-app-rewired build",
     "build:web-app": "REACT_APP_BUILD_TARGET=web-app react-app-rewired build",
+    "package": "crx3 -p -o -x KimaiBrowserPlugin.zip build",
+    "deploy": "mv build.crx symfony/BrowserPluginBundle/Resources/assets/KimaiBrowserPlugin.crx",
     "test": "react-app-rewired test",
     "prepare": "husky install"
   },
