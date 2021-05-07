@@ -40,5 +40,6 @@
       "background.js"
     ],
     "persistent": false
-  }
+  },
+  "permissions": [ "<all_urls>" ]
 }
