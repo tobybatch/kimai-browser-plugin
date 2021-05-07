@@ -37,7 +37,7 @@ class MenuSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ConfigureMainMenuEvent::class => ['onMenuConfigure', 100],
+            ConfigureMainMenuEvent::class => ['onMenuConfigure', 10],
         ];
     }
 
@@ -54,9 +54,9 @@ class MenuSubscriber implements EventSubscriberInterface
 
         $menu = $event->getAdminMenu();
 
-        if ($auth->isGranted('demo')) {
+        if ($auth->isGranted('create_own_timesheet')) {
             $menu->addChild(
-                new MenuItemModel('github', 'GitHub', '/', [], 'fas fa-snowman')
+                new MenuItemModel('kimai-browser-plugin', 'Browser Plugin', 'kimai-browser-plugin', [], 'fas fa-snowman')
             );
         }
     }

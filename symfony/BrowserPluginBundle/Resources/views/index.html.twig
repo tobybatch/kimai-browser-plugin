@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% import "macros/widgets.html.twig" as widgets %}
+{% import "macros/datatables.html.twig" as tables %}
+
+{% block page_title %}{{ 'Kimai Browser Plugin'|trans }}{% endblock %}
+
+{% block main %}
+
+    Install this browser plugin to access this Kimai from you browser:
+
+    <a href="{{ path('kimai-browser-plugin-download') }}">KimaiBrowserPlugin.crx</a>
+{% endblock %}
