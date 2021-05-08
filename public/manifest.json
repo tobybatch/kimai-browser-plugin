@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Kimai Browser Plugin",
+  "version": "0.1.0",
+  "description": "Log time direct to your kimai instance from your browser.",
+  "icons": {
+    "16": "icons/icon_16.png",
+    "32": "icons/icon_32.png",
+    "48": "icons/icon_48.png",
+    "128": "icons/icon_128.png"
+  },
+  "action": {
+    "default_title": "Kimai Browser Plugin",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ]
+}
