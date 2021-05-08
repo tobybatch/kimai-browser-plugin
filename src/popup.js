@@ -21,12 +21,6 @@ import './popup.css';
         },
     };
 
-    function showIframe(kimaiUrl) {
-        document.getElementById(
-            'app'
-        ).innerHTML = ""
-    }
-
     function showIframe() {
         // Restore count value
         debugger;
@@ -34,7 +28,10 @@ import './popup.css';
             if (typeof kimaiUrl === 'undefined') {
                 options();
             } else {
-                showIframe(kimaiUrl);
+                document.getElementById('loading').style.display = "none";
+                document.getElementById('kimaiframe').style.display = "block";
+                document.getElementById('options').style.display = "none";
+                document.getElementById('kimai').setAttribute("src",kimaiUrl );
             }
         });
     }
@@ -45,10 +42,42 @@ import './popup.css';
         document.getElementById('options').style.display = "block";
     }
 
+    function ajax(url, callback) {
+        const xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState !== 4) {
+                return;
+            }
+
+            if (this.status === 302) {
+                const location = this.getResponseHeader("Location");
+                return ajax.call(this, location /*params*/, callback);
+            }
+
+            callback(this);
+        };
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+    }
+
     document.getElementById('save').addEventListener('click', () => {
-        // test and save
+        testAndSave()
     });
-    debugger;
+
+    function testAndSave() {
+        const theUrl = document.getElementById('kimaiurl').value;
+        ajax(theUrl, response => {
+            if (response.status === 200) {
+                // save url
+                kimaiUrlStorage.set(theUrl);
+                showIframe();
+            }
+            else {
+                // TODO Added feeedback
+            }
+        })
+    }
+
     document.addEventListener('DOMContentLoaded', showIframe);
 
 })();
