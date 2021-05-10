@@ -9,6 +9,7 @@
     "48": "icons/icon_48.png",
     "128": "icons/icon_128.png"
   },
+  "options_page": "options.html",
   "action": {
     "default_title": "Kimai Browser Plugin",
     "default_popup": "popup.html"
