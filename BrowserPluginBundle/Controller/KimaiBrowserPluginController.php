@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-namespace KimaiPlugin\CustomCSSBundle\Controller;
+namespace KimaiPlugin\BrowserPluginBundle\Controller;
 
 use App\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
