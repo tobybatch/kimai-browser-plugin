@@ -1,17 +1,4 @@
-# dependencies
-/node_modules
-
-# production
-/build
-
-# misc
-.DS_Store
-
-npm-debug.log*
-
-.idea/
-KimaiBrowserPlugin.zip
-_old/
 build.pem
-package-lock.json
-symfony/CustomCSSBundle-1.3/
+docker-vols/
+.idea/
+

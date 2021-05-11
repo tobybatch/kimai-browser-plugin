@@ -1,6 +1,0 @@
-monolog:
-  handlers:
-    main:
-      type: error_log
-      level: debug
-      channels: ["!doctrine", "!event", "!security"]

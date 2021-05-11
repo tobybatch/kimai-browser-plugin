@@ -46,9 +46,9 @@ services:
       - TRUSTED_HOSTS=nginx,localhost,127.0.0.1
     volumes:
       - public:/opt/kimai/public
-      - ./symfony/BrowserPluginBundle:/opt/kimai/var/plugins/BrowserPluginBundle
-      - ./symfony/CustomCSSBundle-1.3:/opt/kimai/var/plugins/CustomCSSBundle
-      - ./symfony/config:/opt/kimai/config
+      - ./BrowserPluginBundle:/opt/kimai/var/plugins/BrowserPluginBundle
+      - ./docker-vols/CustomCSSBundle-1.3:/opt/kimai/var/plugins/CustomCSSBundle
+      - ./docker-vols/config:/opt/kimai/config
       # - ./ldap.conf:/etc/openldap/ldap.conf:z
       # - ./ROOT-CA.pem:/etc/ssl/certs/ROOT-CA.pem:z
     restart: unless-stopped

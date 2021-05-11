@@ -14,7 +14,7 @@ import './popup.css';
             }
         });
         chrome.storage.sync.get(['kimaiUrl'], result => {
-            document.getElementById('kimaiurl').value = result.kimaiUrl;
+            document.getElementById('kimaiurl').value = result.kimaiUrl || "";
         });
         document.getElementById('loading').style.display = "none";
         document.getElementById('kimaiframe').style.display = "none";
@@ -30,13 +30,20 @@ import './popup.css';
         });
         chrome.storage.sync.get(['kimaiUrl'], result => {
             let kimaiUrl = result.kimaiUrl;
+            // Quick check
+            if (kimaiUrl === undefined || kimaiUrl === "") {
+                document.getElementById("feedback").innerHTML = "Set the Kimai URL";
+                showOptions();
+                return;
+            }
+            // Longer, slower check
             ajax(kimaiUrl, response => {
-                // Check the URL is good
                 if (response.status >= 400) {
                     document.getElementById("feedback").innerHTML
                         = "<b>Cannot connect to remote Kimai at:</b><br />"
                         + kimaiUrl + "<br />"
                         + "Set the Kimai URL in the option";
+                    showOptions();
                 } else {
                     let fullUrl = kimaiUrl + "/" + lang + "/timesheet/create";
                     chrome.tabs.query({active: true}, tabs => {
