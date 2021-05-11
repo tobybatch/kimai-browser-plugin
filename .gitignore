@@ -3,3 +3,5 @@ docker-vols/
 .idea/
 
 chrome_ext/build.crx
+
+node_modules

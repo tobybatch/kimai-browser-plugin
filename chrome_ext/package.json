@@ -1,5 +1,5 @@
 {
-  "name": "kimai-logger",
+  "name": "kimai-chrome-extension",
   "version": "2.0.0",
   "private": true,
   "scripts": {
@@ -9,15 +9,11 @@
     "deploy": "mv build.crx ../BrowserPluginBundle/Resources/assets/KimaiBrowserPlugin.crx"
   },
   "devDependencies": {
-    "@commitlint/cli": "^12.1.1",
-    "@commitlint/config-conventional": "^12.1.1",
     "copy-webpack-plugin": "^6.4.1",
     "css-loader": "^4.3.0",
     "file-loader": "^6.2.0",
-    "husky": "^6.0.0",
     "mini-css-extract-plugin": "^0.10.1",
     "size-plugin": "^2.0.2",
-    "standard-version": "^9.2.0",
     "webpack": "^4.46.0",
     "webpack-cli": "^3.3.12",
     "webpack-merge": "^5.7.3"

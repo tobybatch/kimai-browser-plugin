@@ -1,0 +1,34 @@
+{
+  "name": "browser-plugin-bundle",
+  "version": "2.0.0",
+  "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "echo git hooks are awesome!",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.1",
+    "@commitlint/config-conventional": "^12.1.1",
+    "husky": "^6.0.0"
+  }
+}
