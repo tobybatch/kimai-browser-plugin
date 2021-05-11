@@ -1,6 +1,5 @@
 {
   "name": "browser-plugin-bundle",
-  "version": "2.0.0",
   "private": true,
   "husky": {
     "hooks": {
@@ -36,5 +35,6 @@
     "@commitlint/config-conventional": "^12.1.1",
     "husky": "^6.0.0",
     "standard-version": "^9.3.0"
-  }
+  },
+  "version": null
 }
