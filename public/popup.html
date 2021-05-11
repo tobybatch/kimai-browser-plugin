@@ -3,26 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <title>Kimai Plugin</title>
-    <link rel="stylesheet" href="popup.css" />
+    <link href="popup.css" rel="stylesheet"/>
 </head>
 <body>
-  <div class="app">
-      <div id="loading">
-          Loading ...
-      </div>
-      <div id="kimaiframe" style="display: none">
-          <iframe title='kimai' id="kimai" width='780' height='580' src='' ></iframe>
-      </div>
-      <div id="options" style="display: none">
-          <h2>Kimai url</h2>
-          <p>Enter the URL to the root of your Kimai instance.</p>
-          <p><input type="text" name="kimaiurl" id="kimaiurl" /></p>
-          <p><button id="save">Test and Save</button></p>
-          <p id="feedback"></p>
-      </div>
-  </div>
+<div class="app">
+    <div id="loading">
+        Loading ...
+    </div>
+    <div id="kimaiframe" style="display: none">
+        <iframe height='580' id="kimai" src='' title='kimai' width='780'></iframe>
+    </div>
+    <div id="options" style="display: none">
+        <h2>Kimai url</h2>
+        <p>Enter the URL to the root of your Kimai instance.</p>
+        <p><input id="kimaiurl" name="kimaiurl" type="text"/></p>
+        <p>
+            <button id="save">Test and Save</button>
+        </p>
+        <p>
+            <select id="lang" name="lang">
+                <option>ar</option>
+                <option>cs</option>
+                <option>da</option>
+                <option>de</option>
+                <option>de_CH</option>
+                <option>en</option>
+                <option>eo</option>
+                <option>es</option>
+                <option>eu</option>
+                <option>fa</option>
+                <option>fi</option>
+                <option>fo</option>
+                <option>fr</option>
+                <option>he</option>
+                <option>hu</option>
+                <option>it</option>
+                <option>ja</option>
+                <option>ko</option>
+                <option>nl</option>
+                <option>pl</option>
+                <option>pt</option>
+                <option>pt_BR</option>
+                <option>ro</option>
+                <option>ru</option>
+                <option>sk</option>
+                <option>sv</option>
+                <option>tr</option>
+                <option>vi</option>
+                <option>zh_CN</option>
+            </select>
+        </p>
+        <p id="feedback"></p>
+    </div>
+    <div id="footer">
+        <span id="footer-text"></span>
+        <button id="settings"><img src="icons/settings_16.png"></button>
+    </div>
+</div>
 
-  <script src="popup.js">debugger</script>
+<script src="popup.js"></script>
 
 </body>
 </html>
