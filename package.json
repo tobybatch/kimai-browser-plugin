@@ -1,6 +1,6 @@
 {
   "name": "browser-plugin-bundle",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "husky": {
     "hooks": {
@@ -9,7 +9,9 @@
     }
   },
   "scripts": {
-    "release": "standard-version"
+    "release-patch": "standard-version --release-as patch",
+    "release-minor": "standard-version --release-as minor",
+    "release-major": "standard-version --release-as major"
   },
   "eslintConfig": {
     "extends": [
