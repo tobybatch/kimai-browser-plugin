@@ -36,5 +36,5 @@
     "husky": "^6.0.0",
     "standard-version": "^9.3.0"
   },
-  "version": null
+  "version": "2.0.0"
 }
