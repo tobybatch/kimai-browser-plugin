@@ -97,6 +97,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
         $source = $request->query->get("source");
 
         if (!empty($source)) {
+            $this->logger->debug("source url detected", [$source]);
             $url = parse_url($source);
             if ($url['host'] === "github.com") {
                 $tags = $this->makeTagsFromGithub($url);

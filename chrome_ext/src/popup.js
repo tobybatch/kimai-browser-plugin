@@ -46,16 +46,17 @@ import './popup.css';
                     showOptions();
                 } else {
                     let fullUrl = kimaiUrl + "/" + lang + "/timesheet/create";
-                    chrome.tabs.query({active: true}, tabs => {
+                    chrome.tabs.query({currentWindow: true, active: true}, tabs => {
                         const tabUrl = tabs[0].url;
                         fullUrl += "?source=" + encodeURIComponent(tabUrl);
-                        console.log(fullUrl);
+                        document.getElementById('kimai').src = 
+                          kimaiUrl + "/" + lang + 
+                          "/timesheet/create" + "?source=" + encodeURIComponent(tabUrl);
                     });
                     document.getElementById('footer-text').innerHTML = "Kimai @ " + kimaiUrl;
                     document.getElementById('loading').style.display = "none";
                     document.getElementById('kimaiframe').style.display = "block";
                     document.getElementById('options').style.display = "none";
-                    document.getElementById('kimai').setAttribute("src", fullUrl);
                 }
             })
         });
