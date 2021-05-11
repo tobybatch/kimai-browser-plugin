@@ -1,12 +1,12 @@
 {
   "name": "kimai-logger",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "watch": "webpack --mode=development --watch --config config/webpack.config.js",
     "build": "webpack --mode=production --config config/webpack.config.js",
     "package": "crx3 -p -o -x KimaiBrowserPlugin.zip build",
-    "deploy": "mv build.crx symfony/BrowserPluginBundle/Resources/assets/KimaiBrowserPlugin.crx"
+    "deploy": "mv build.crx ../BrowserPluginBundle/Resources/assets/KimaiBrowserPlugin.crx"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",

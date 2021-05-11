@@ -3,7 +3,7 @@
     "description": "Browser plugin",
     "homepage": "https://www.neontribe.co.uk/",
     "type": "kimai-plugin",
-    "version": "0.1",
+    "version": "2.0.0",
     "require": {
         "kimai/kimai2-composer": "*"
     },
@@ -17,9 +17,9 @@
     ],
     "extra": {
         "kimai": {
-            "require": "1.3",
-            "version": "0.1",
-            "name": "Kimai Browser Pligin"
+            "require": "1.14",
+            "version": "2.0.0",
+            "name": "Kimai Browser Plugin"
         }
     }
 }

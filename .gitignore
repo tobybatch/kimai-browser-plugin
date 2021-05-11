@@ -2,3 +2,4 @@ build.pem
 docker-vols/
 .idea/
 
+chrome_ext/build.crx
