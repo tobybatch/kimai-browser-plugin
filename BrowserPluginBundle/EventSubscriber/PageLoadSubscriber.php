@@ -10,11 +10,15 @@
 
 namespace KimaiPlugin\BrowserPluginBundle\EventSubscriber;
 
+use App\Entity\Tag;
+use App\Entity\Timesheet;
 use App\Repository\ActivityRepository;
 use App\Repository\CustomerRepository;
 use App\Repository\ProjectRepository;
+use App\Repository\Query\TimesheetQuery;
 use App\Repository\TagRepository;
 use App\Repository\TimesheetRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -90,7 +94,6 @@ class PageLoadSubscriber implements EventSubscriberInterface
         ];
     }
 
-    // http://localhost:8001/en/timesheet/create?source=https%3A%2F%2Fgithub.com%2Ftobybatch%2Fkimai2%2Fissues%2F235
     public function onController(ControllerEvent $event)
     {
         $request = $event->getRequest();
@@ -107,7 +110,8 @@ class PageLoadSubscriber implements EventSubscriberInterface
                     if ($projectId) {
                         $request->query->set("project", $projectId);
                     }
-                    $projectId = $this->getTopActivity("issue-" . $tags['issue']);
+                    $activityTags = ["issue-" . $tags['issue'], "project-" . $tags['project']];
+                    $projectId = $this->getTopActivity($activityTags, $projectId);
                     if ($projectId) {
                         $request->query->set("activity", $projectId);
                     }
@@ -124,42 +128,73 @@ class PageLoadSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function getTopProject(string $tagName)
+    private function getTopProject(string $tagNames)
     {
-        $sql = 'SELECT ts.project_id, count(*) c FROM kimai2_timesheet ts
-         INNER JOIN kimai2_timesheet_tags tt ON ts.id=tt.timesheet_id
-         INNER JOIN kimai2_tags tags ON tt.tag_id=tags.id
-         WHERE tags.name = :tagName
-         GROUP BY project_id
-         ORDER BY c';
-        $statement = $this->entityManager->getConnection()->prepare($sql);
-        $statement->execute(["tagName" => $tagName]);
-        if ($row = $statement->fetch()) {
-            return $row['project_id'];
+        $timeSheets = $this->loadTimeSheetsByTag([$tagNames]);
+        $projects = [];
+        foreach ($timeSheets as $timesheet) {
+            $project = $timesheet->getProject();
+            $id = $project->getId();
+            if (key_exists($id, $projects)) {
+                $projects[$id] = $projects[$id] + 1;
+            } else {
+                $projects[$id] = 1;
+            }
         }
+
+        $projectId = null;
+        $count = 0;
+        foreach ($projects as $id => $project_count) {
+            if ($project_count > $count) {
+                $count = $project_count;
+                $projectId = $id;
+            }
+        }
+
+        return $projectId;
     }
 
-    private function getTopActivity(string $tagName)
+    // project-kimai2, issue-235
+    private function getTopActivity(array $tagNames, $project_id): ?int
     {
-        $sql = 'SELECT ts.activity_id, count(*) c FROM kimai2_timesheet ts
-         INNER JOIN kimai2_timesheet_tags tt ON ts.id=tt.timesheet_id
-         INNER JOIN kimai2_tags tags ON tt.tag_id=tags.id
-         WHERE tags.name = :tagName
-         GROUP BY activity_id
-         ORDER BY c';
-        $statement = $this->entityManager->getConnection()->prepare($sql);
-        $statement->execute(["tagName" => $tagName]);
-        if ($row = $statement->fetch()) {
-            return $row['activity_id'];
+        // select count(k2t.activity_id), k2t.activity_id from kimai2_timesheet k2t
+        // inner join kimai2_timesheet_tags k2tt on k2t.id = k2tt.timesheet_id
+        // inner join kimai2_tags k on k2tt.tag_id = k.id
+        // where k.name in ("issue-235",  "project-kimai2")
+        // group by k2t.activity_id;
+
+        $timeSheets = $this->loadTimeSheetsByTag($tagNames);
+        $activities = [];
+        foreach ($timeSheets as $timesheet) {
+            if ($timesheet->getActivity()->getProject() !== NULL && $timesheet->getProject()->getId() !== $project_id) {
+                continue;
+            }
+            $activity = $timesheet->getActivity();
+            $id = $activity->getId();
+            if (key_exists($id, $activities)) {
+                $activities[$id] = $activities[$id] + 1;
+            } else {
+                $activities[$id] = 1;
+            }
         }
-        /*
-         SELECT ts.activity_id, count(*) c FROM kimai2_timesheet ts
-         INNER JOIN kimai2_timesheet_tags tt ON ts.id=tt.timesheet_id
-         INNER JOIN kimai2_tags tags ON tt.tag_id=tags.id
-         WHERE tags.name="issue-235"
-         GROUP BY activity_id
-         ORDER BY c
-        */
+
+        $activityId = null;
+        $count = 0;
+        foreach ($activities as $id => $activity_count) {
+            if ($activity_count > $count) {
+                $count = $activity_count;
+                $activityId = $id;
+            }
+        }
+
+        return $activityId;
+    }
+
+    private function loadTimeSheetsByTag(array $tagNames) {
+        $tags = $this->tagRepository->findBy(["name" => $tagNames]);
+        $timesheetQuery = new TimesheetQuery();
+        $timesheetQuery->setTags($tags);
+        return $this->timesheetRepository->getTimesheetsForQuery($timesheetQuery);
     }
 
     private function makeTagsFromGithub(array $url): array
@@ -171,6 +206,9 @@ class PageLoadSubscriber implements EventSubscriberInterface
         }
         if (count($parts) > 3 && $parts[2] === "issues") {
             $tags["issue"] = $parts[3];
+        }
+        if (count($parts) > 3 && $parts[2] === "projects") {
+            $tags["projects"] = $parts[3];
         }
         return $tags;
     }
