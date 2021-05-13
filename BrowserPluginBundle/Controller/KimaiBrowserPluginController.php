@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mime\FileinfoMimeTypeGuesser;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,10 +39,9 @@ class KimaiBrowserPluginController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function downloadAction(Request $request)
+    public function downloadAction(Request $request, KernelInterface $kernel)
     {
-        $path = $this
-                ->get('kernel')
+        $path = $kernel
                 ->getRootDir() . '/../var/plugins/BrowserPluginBundle/Resources/assets/KimaiBrowserPlugin.crx';
         $response = new BinaryFileResponse($path);
         $response->headers->set('Content-Description', "File Transfer");
