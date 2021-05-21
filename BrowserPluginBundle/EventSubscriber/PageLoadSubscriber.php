@@ -10,15 +10,12 @@
 
 namespace KimaiPlugin\BrowserPluginBundle\EventSubscriber;
 
-use App\Entity\Tag;
-use App\Entity\Timesheet;
 use App\Repository\ActivityRepository;
 use App\Repository\CustomerRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\Query\TimesheetQuery;
 use App\Repository\TagRepository;
 use App\Repository\TimesheetRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -103,6 +100,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
             $this->logger->debug("source url detected", [$source]);
             $url = parse_url($source);
             if ($url['host'] === "github.com") {
+                $request->query->set("description", $source);
                 $tags = $this->makeTagsFromGithub($url);
                 if (count($tags)) {
                     // Try and look up project and issue
@@ -110,7 +108,13 @@ class PageLoadSubscriber implements EventSubscriberInterface
                     if ($projectId) {
                         $request->query->set("project", $projectId);
                     }
-                    $activityTags = ["issue-" . $tags['issue'], "project-" . $tags['project']];
+                    $activityTags = [];
+                    if (array_key_exists('issue', $tags)) {
+                        $activityTags[] = "issue-" . $tags['issue'];
+                    }
+                    if (array_key_exists('project', $tags)) {
+                        $activityTags[] = "project-" . $tags['project'];
+                    }
                     $projectId = $this->getTopActivity($activityTags, $projectId);
                     if ($projectId) {
                         $request->query->set("activity", $projectId);
@@ -166,7 +170,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
         $timeSheets = $this->loadTimeSheetsByTag($tagNames);
         $activities = [];
         foreach ($timeSheets as $timesheet) {
-            if ($timesheet->getActivity()->getProject() !== NULL && $timesheet->getProject()->getId() !== $project_id) {
+            if ($timesheet->getActivity()->getProject() !== null && $timesheet->getProject()->getId() !== $project_id) {
                 continue;
             }
             $activity = $timesheet->getActivity();
@@ -190,7 +194,8 @@ class PageLoadSubscriber implements EventSubscriberInterface
         return $activityId;
     }
 
-    private function loadTimeSheetsByTag(array $tagNames) {
+    private function loadTimeSheetsByTag(array $tagNames)
+    {
         $tags = $this->tagRepository->findBy(["name" => $tagNames]);
         $timesheetQuery = new TimesheetQuery();
         $timesheetQuery->setTags($tags);
