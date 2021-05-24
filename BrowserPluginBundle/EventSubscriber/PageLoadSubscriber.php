@@ -99,35 +99,46 @@ class PageLoadSubscriber implements EventSubscriberInterface
         if (!empty($source)) {
             $this->logger->debug("source url detected", [$source]);
             $url = parse_url($source);
+            $derivedTags = [];
+            $request->query->set("description", $source);
             if ($url['host'] === "github.com") {
-                $request->query->set("description", $source);
-                $tags = $this->makeTagsFromGithub($url);
-                if (count($tags)) {
-                    // Try and look up project and issue
-                    $projectId = $this->getTopProject("project-" . $tags['project']);
-                    if ($projectId) {
-                        $request->query->set("project", $projectId);
-                    }
-                    $activityTags = [];
-                    if (array_key_exists('issue', $tags)) {
-                        $activityTags[] = "issue-" . $tags['issue'];
-                    }
-                    if (array_key_exists('project', $tags)) {
-                        $activityTags[] = "project-" . $tags['project'];
-                    }
-                    $projectId = $this->getTopActivity($activityTags, $projectId);
-                    if ($projectId) {
-                        $request->query->set("activity", $projectId);
-                    }
-                    // Collapse the tags array into tag values
-                    array_walk(
-                        $tags,
-                        function (&$a, $b) {
-                            $a = "$b-$a";
-                        }
-                    );
-                    $request->query->set("tags", implode(",", $tags));
+                $derivedTags = $this->makeTagsFromGithub($url);
+            } elseif ($url['host'] === "trello.com") {
+                $derivedTags = $this->makeTagsFromTrello($url);
+            }
+            if (count($derivedTags)) {
+                // ?from=2018-08-02T20%3A00%3A00&to=2018-08-02T20%3A30%3A00');
+                // Try and look up project and issue
+
+                // Get ans set project Id
+                $projectId = false;
+                if (array_key_exists('project', $derivedTags)) {
+                    $projectId = $this->getTopProject("project-" . $derivedTags['project']);
                 }
+
+                // Build a list of tags to apply to the timesheets
+                $tags = [];
+                if (array_key_exists('issue', $derivedTags)) {
+                    $tags[] = "issue-" . $derivedTags['issue'];
+                }
+                if (array_key_exists('project', $derivedTags)) {
+                    $tags[] = "project-" . $derivedTags['project'];
+                }
+
+                // Use the tags to guess the best matched activity
+                $activityId = $this->getTopActivity($tags, $projectId);
+                if ($activityId) {
+                    $request->query->set("activity", $projectId);
+                }
+
+                // Collapse the tags array into tag values
+                array_walk(
+                    $derivedTags,
+                    function (&$a, $b) {
+                        $a = "$b-$a";
+                    }
+                );
+                $request->query->set("tags", implode(",", $derivedTags));
             }
         }
     }
@@ -217,4 +228,21 @@ class PageLoadSubscriber implements EventSubscriberInterface
         }
         return $tags;
     }
+
+    private function makeTagsFromTrello(array $url): array
+    {
+        $parts = explode("/", trim($url['path'], "/"));
+        $tags = [];
+        if (count($parts) >= 3) {
+            if ($parts[0] === "b") {
+                $tags["project"] = $parts[2];
+            } elseif ($parts[0] === "c") {
+                $tags["issue"] = $parts[2];
+            }
+        }
+        return $tags;
+    }
+
+    // https://trello.com/b/jZnvnZJP/mind-of-my-own-dev
+    // https://trello.com/c/oQSrWyIv/4262-catch-up-april-may-2021
 }
