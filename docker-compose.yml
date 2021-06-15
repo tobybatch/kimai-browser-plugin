@@ -1,6 +1,7 @@
 version: '3.5'
 services:
 
+  # docker-compose exec sqldb mysql -ukimaiuser -pkimaipassword kimai
   sqldb:
     image: mysql:5.7
     environment:
@@ -21,7 +22,7 @@ services:
       - ADMINMAIL=admin@kimai.local
       - ADMINPASS=changemeplease
       - DATABASE_URL=mysql://kimaiuser:kimaipassword@sqldb/kimai
-      - TRUSTED_HOSTS=nginx,localhost,127.0.0.1
+      - TRUSTED_HOSTS=nginx,localhost,127.0.0.1,kimai.test
     ports:
       - 8001:8001
     volumes:

@@ -1,8 +1,8 @@
 <?php
 
 /*
- * This file is part of the DemoBundle for Kimai 2.
- * All rights reserved by Kevin Papst (www.kevinpapst.de).
+ * This file is part of the Browser Plugin for Kimai 2.
+ * All rights reserved by Toby Batch (www.neontribe.co.uk).
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,13 +10,10 @@
 
 namespace KimaiPlugin\BrowserPluginBundle\EventSubscriber;
 
-use App\Repository\ActivityRepository;
 use App\Repository\CustomerRepository;
-use App\Repository\ProjectRepository;
 use App\Repository\Query\TimesheetQuery;
 use App\Repository\TagRepository;
 use App\Repository\TimesheetRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -26,12 +23,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * Class PageLoadSubscriber
  * @package KimaiPlugin\BrowserPluginBundle\EventSubscriber
  */
-/*
- * kernel.controller
- * kernel.request
- * kernel.view
- */
-
 class PageLoadSubscriber implements EventSubscriberInterface
 {
     /**
@@ -40,24 +31,10 @@ class PageLoadSubscriber implements EventSubscriberInterface
     private LoggerInterface $logger;
     /**
      * @var CustomerRepository
-     */
-    private CustomerRepository $customerRepository;
-    /**
-     * @var ProjectRepository
-     */
-    private ProjectRepository $projectRepository;
-    /**
-     * @var ActivityRepository
-     */
-    private ActivityRepository $activityRepository;
-    /**
+     * /**
      * @var TagRepository
      */
     private TagRepository $tagRepository;
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
     /**
      * @var TimesheetRepository
      */
@@ -65,19 +42,11 @@ class PageLoadSubscriber implements EventSubscriberInterface
 
     public function __construct(
         LoggerInterface $logger,
-        CustomerRepository $customerRepository,
-        ProjectRepository $projectRepository,
-        ActivityRepository $activityRepository,
         TagRepository $tagRepository,
-        TimesheetRepository $timesheetRepository,
-        EntityManagerInterface $entityManager
+        TimesheetRepository $timesheetRepository
     ) {
         $this->logger = $logger;
-        $this->customerRepository = $customerRepository;
-        $this->projectRepository = $projectRepository;
-        $this->activityRepository = $activityRepository;
         $this->tagRepository = $tagRepository;
-        $this->entityManager = $entityManager;
         $this->timesheetRepository = $timesheetRepository;
     }
 
@@ -91,7 +60,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onController(ControllerEvent $event)
+    public function onController(ControllerEvent $event): void
     {
         $request = $event->getRequest();
         $source = $request->query->get("source");
@@ -101,44 +70,49 @@ class PageLoadSubscriber implements EventSubscriberInterface
             $url = parse_url($source);
             $derivedTags = [];
             $request->query->set("description", $source);
-            if ($url['host'] === "github.com") {
-                $derivedTags = $this->makeTagsFromGithub($url);
-            } elseif ($url['host'] === "trello.com") {
-                $derivedTags = $this->makeTagsFromTrello($url);
-            }
-            if (count($derivedTags)) {
-                // ?from=2018-08-02T20%3A00%3A00&to=2018-08-02T20%3A30%3A00');
-                // Try and look up project and issue
-
-                // Get ans set project Id
-                $projectId = false;
-                if (array_key_exists('project', $derivedTags)) {
-                    $projectId = $this->getTopProject("project-" . $derivedTags['project']);
+            // don't process file urls
+            if (array_key_exists("host", $url)) {
+                if ($url['host'] === "github.com") {
+                    $derivedTags = $this->makeTagsFromGithub($url);
+                } elseif ($url['host'] === "trello.com") {
+                    $derivedTags = $this->makeTagsFromTrello($url);
                 }
+                $this->logger->debug("Derived tags", $derivedTags);
+                if (count($derivedTags)) {
+                    // ?from=2018-08-02T20%3A00%3A00&to=2018-08-02T20%3A30%3A00');
+                    // Try and look up project and issue
 
-                // Build a list of tags to apply to the timesheets
-                $tags = [];
-                if (array_key_exists('issue', $derivedTags)) {
-                    $tags[] = "issue-" . $derivedTags['issue'];
-                }
-                if (array_key_exists('project', $derivedTags)) {
-                    $tags[] = "project-" . $derivedTags['project'];
-                }
-
-                // Use the tags to guess the best matched activity
-                $activityId = $this->getTopActivity($tags, $projectId);
-                if ($activityId) {
-                    $request->query->set("activity", $projectId);
-                }
-
-                // Collapse the tags array into tag values
-                array_walk(
-                    $derivedTags,
-                    function (&$a, $b) {
-                        $a = "$b-$a";
+                    // Get ans set project Id
+                    $projectId = false;
+                    if (array_key_exists('project', $derivedTags)) {
+                        $projectId = $this->getTopProject("project-" . $derivedTags['project']);
+                        $request->query->set("project", $projectId);
                     }
-                );
-                $request->query->set("tags", implode(",", $derivedTags));
+
+                    // Build a list of tags to apply to the timesheets
+                    $tags = [];
+                    if (array_key_exists('issue', $derivedTags)) {
+                        $tags[] = "issue-" . $derivedTags['issue'];
+                    }
+                    if (array_key_exists('project', $derivedTags)) {
+                        $tags[] = "project-" . $derivedTags['project'];
+                    }
+
+                    // Use the tags to guess the best matched activity
+                    $activityId = $this->getTopActivity($tags, $projectId);
+                    if ($activityId) {
+                        $request->query->set("activity", $activityId);
+                    }
+
+                    // Collapse the tags array into tag values
+                    array_walk(
+                        $derivedTags,
+                        static function (&$a, $b) {
+                            $a = "$b-$a";
+                        }
+                    );
+                    $request->query->set("tags", implode(",", $derivedTags));
+                }
             }
         }
     }
@@ -149,13 +123,14 @@ class PageLoadSubscriber implements EventSubscriberInterface
         $projects = [];
         foreach ($timeSheets as $timesheet) {
             $project = $timesheet->getProject();
-            $id = $project->getId();
-            if (key_exists($id, $projects)) {
-                $projects[$id] = $projects[$id] + 1;
+            $id = $project ? $project->getId() : null;
+            if (array_key_exists($id, $projects)) {
+                ++$projects[$id];
             } else {
                 $projects[$id] = 1;
             }
         }
+        $this->logger->debug("Project ids found", $projects);
 
         $projectId = null;
         $count = 0;
@@ -165,6 +140,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
                 $projectId = $id;
             }
         }
+        $this->logger->debug("Top project Id", [$projectId]);
 
         return $projectId;
     }
@@ -181,17 +157,20 @@ class PageLoadSubscriber implements EventSubscriberInterface
         $timeSheets = $this->loadTimeSheetsByTag($tagNames);
         $activities = [];
         foreach ($timeSheets as $timesheet) {
-            if ($timesheet->getActivity()->getProject() !== null && $timesheet->getProject()->getId() !== $project_id) {
+            $activity = $timesheet->getActivity();
+            $project = $activity ? $activity->getProject() : null;
+            if ($project !== null && $project->getId() !== $project_id) {
+                $this->logger->debug("Wrong project Id", [$project->getId()]);
                 continue;
             }
-            $activity = $timesheet->getActivity();
             $id = $activity->getId();
-            if (key_exists($id, $activities)) {
-                $activities[$id] = $activities[$id] + 1;
+            if (array_key_exists($id, $activities)) {
+                ++$activities[$id];
             } else {
                 $activities[$id] = 1;
             }
         }
+        $this->logger->debug("Activity ids found", $activities);
 
         $activityId = null;
         $count = 0;
@@ -201,6 +180,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
                 $activityId = $id;
             }
         }
+        $this->logger->debug("Top activity Id", [$activityId]);
 
         return $activityId;
     }
