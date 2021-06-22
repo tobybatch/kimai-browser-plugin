@@ -6,13 +6,15 @@
 
 {% block main %}
 
-    <div>
-        Install this browser plugin to access this Kimai from you browser:
-        <a href="{{ path('kimai-browser-plugin-download') }}">KimaiBrowserPlugin.crx</a>
-    </div>
+    <div id="browser-plugin">
+        <div>
+            Install this browser plugin to access this Kimai from you browser:
+            <a href="{{ path('kimai-browser-plugin-download') }}">KimaiBrowserPlugin.crx</a>
+        </div>
 
-    <div>
-        If you want to make it better the repo is here
-        <a href="https://github.com/tobybatch/kimai-browser-plugin">https://github.com/tobybatch/kimai-browser-plugin</a>
+        <div>
+            If you want to make it better the repo is here
+            <a href="https://github.com/tobybatch/kimai-browser-plugin">https://github.com/tobybatch/kimai-browser-plugin</a>
+        </div>
     </div>
 {% endblock %}

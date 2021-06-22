@@ -5,3 +5,4 @@ docker-vols/
 chrome_ext/build.crx
 
 node_modules
+BrowserPluginBundle/phpunit

@@ -117,7 +117,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function getTopProject(string $tagNames)
+    protected function getTopProject(string $tagNames)
     {
         $timeSheets = $this->loadTimeSheetsByTag([$tagNames]);
         $projects = [];
@@ -146,7 +146,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
     }
 
     // project-kimai2, issue-235
-    private function getTopActivity(array $tagNames, $project_id): ?int
+    protected function getTopActivity(array $tagNames, $project_id): ?int
     {
         // select count(k2t.activity_id), k2t.activity_id from kimai2_timesheet k2t
         // inner join kimai2_timesheet_tags k2tt on k2t.id = k2tt.timesheet_id
@@ -185,7 +185,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
         return $activityId;
     }
 
-    private function loadTimeSheetsByTag(array $tagNames)
+    protected function loadTimeSheetsByTag(array $tagNames)
     {
         $tags = $this->tagRepository->findBy(["name" => $tagNames]);
         $timesheetQuery = new TimesheetQuery();
@@ -193,7 +193,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
         return $this->timesheetRepository->getTimesheetsForQuery($timesheetQuery);
     }
 
-    private function makeTagsFromGithub(array $url): array
+    protected function makeTagsFromGithub(array $url): array
     {
         $parts = explode("/", trim($url['path'], "/"));
         $tags = [];
@@ -209,7 +209,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
         return $tags;
     }
 
-    private function makeTagsFromTrello(array $url): array
+    protected function makeTagsFromTrello(array $url): array
     {
         $parts = explode("/", trim($url['path'], "/"));
         $tags = [];
