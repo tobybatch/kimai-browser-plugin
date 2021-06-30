@@ -117,7 +117,7 @@ class PageLoadSubscriber implements EventSubscriberInterface
         }
     }
 
-    protected function getTopProject(string $tagNames)
+    protected function getTopProject(string $tagNames): ?int
     {
         $timeSheets = $this->loadTimeSheetsByTag([$tagNames]);
         $projects = [];

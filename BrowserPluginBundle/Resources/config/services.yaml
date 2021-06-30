@@ -8,3 +8,13 @@ services:
     KimaiPlugin\BrowserPluginBundle\:
         resource: '../../*'
         exclude: '../../{Resources}'
+
+    browser_plugin_response_lister:
+        class: KimaiPlugin\BrowserPluginBundle\Listener\ResponseListener
+        arguments: ['@logger']
+        tags:
+            - {
+                name: kernel.event_listener,
+                event: kernel.response,
+                method: onKernelResponse,
+              }

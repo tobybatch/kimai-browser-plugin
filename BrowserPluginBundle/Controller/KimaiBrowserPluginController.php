@@ -13,6 +13,7 @@ use App\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mime\FileinfoMimeTypeGuesser;
@@ -27,7 +28,7 @@ class KimaiBrowserPluginController extends AbstractController
     /**
      * @Route(path="", name="kimai-browser-plugin", methods={"GET"})
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function indexAction(Request $request)
     {
@@ -37,7 +38,8 @@ class KimaiBrowserPluginController extends AbstractController
     /**
      * @Route(path="/download", name="kimai-browser-plugin-download", methods={"GET"})
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param KernelInterface $kernel
+     * @return Response
      */
     public function downloadAction(Request $request, KernelInterface $kernel)
     {
