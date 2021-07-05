@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/tobybatch/kimai-browser-plugin/compare/v2.0.0...v2.1.0) (2021-07-05)
+
+
+### Features
+
+* added css to hide menus in the popup ([3e86764](https://github.com/tobybatch/kimai-browser-plugin/commits/3e867640b952ff8dc176f09570ecdfd95dd82d57))
+* added tests ([88e5f76](https://github.com/tobybatch/kimai-browser-plugin/commits/88e5f760a8fbe76018a8464ce46fb6e0dcaaf9c7))
+* added trello support ([8e0f503](https://github.com/tobybatch/kimai-browser-plugin/commits/8e0f503c686410fd8119b837998a703d7e4052df))
+* better selection of projects/activity ([dbe4820](https://github.com/tobybatch/kimai-browser-plugin/commits/dbe48205be31d39b99f965a823bfb3b0c59706e3))
+* fixed race condition is setting URL ([c96e44d](https://github.com/tobybatch/kimai-browser-plugin/commits/c96e44d091aee812902b8ca9e64091c0ef33b082))
+
+
+### Bug Fixes
+
+* crx download ([914c3e2](https://github.com/tobybatch/kimai-browser-plugin/commits/914c3e29f8409fee9d892393a89b2fab7512ef70))
+* fixed project/activity set ([d7368b2](https://github.com/tobybatch/kimai-browser-plugin/commits/d7368b24ff1601d87fdf782cf85051d7173d2272))
+* inline the date/duration fields ([4e9da75](https://github.com/tobybatch/kimai-browser-plugin/commits/4e9da75eea7561f2fee827d66061ecc468389c03))
+* namespace for controller ([e0104a0](https://github.com/tobybatch/kimai-browser-plugin/commits/e0104a0c793988e635db8cda4459c273829edf9b))
+* null index error if no issue ([f23d90e](https://github.com/tobybatch/kimai-browser-plugin/commits/f23d90e825a416c33aef5757ea0ca35276a222f2))
+
 ## 2.0.0 (2021-05-11)
 
 
